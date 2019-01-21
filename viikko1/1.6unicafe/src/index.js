@@ -19,48 +19,68 @@ const App = props => {
   };
 
   return (
-    <div>
+    <>
       <Title />
 
       <Button handleClick={handleHyväClick} text="hyvä" />
       <Button handleClick={handleNeutraaliClick} text="neutraali" />
       <Button handleClick={handleHuonoClick} text="huono" />
 
-      <PrintValues hyvä={hyvä} neutraali={neutraali} huono={huono} />
-    </div>
+      <Statistiikka hyvä={hyvä} neutraali={neutraali} huono={huono} />
+    </>
   );
 };
 
 const Title = () => {
   return (
-    <div>
+    <>
       <h1>Anna palautetta</h1>
-    </div>
+    </>
   );
 };
 
-const PrintValues = ({ hyvä, huono, neutraali }) => {
-    
-  const Yhteensä = () => hyvä + huono + neutraali
+const Statistiikka = ({ hyvä, huono, neutraali }) => {
+  const Yhteensä = () => hyvä + huono + neutraali;
 
   const Keskiarvo = () => {
     let Summa = hyvä - huono;
     return Summa / Yhteensä();
   };
 
-  const Positiivisia = () =>  hyvä / Yhteensä() * 100
-  
+  const Positiivisia = () => (hyvä / Yhteensä()) * 100;
+
+  if (Yhteensä() > 0) {
+    return (
+      <>
+        <h2>Statistiikka</h2>
+        <table>
+          <tbody>
+            <Statistic text={"Hyvä: "} amount={hyvä} />
+            <Statistic text={"Neutraali: "} amount={neutraali} />
+            <Statistic text={"Huono: "} amount={huono} />
+            <Statistic text={"Yhteensä: "} amount={Yhteensä()} />
+            <Statistic text={"Keskiarvo: "} amount={Keskiarvo()} />
+            <Statistic text={"Positiivisia: "} amount={Positiivisia()} text1={"%"} />
+          </tbody>
+        </table>
+      </>
+    );
+  }
 
   return (
-    <div>
-      <h2>Statistiikka</h2>
-      <p>Hyvä: {hyvä}</p>
-      <p>Neutraali: {neutraali}</p>
-      <p>Huono: {huono}</p>
-      <p>Yhteensä: {Yhteensä()}</p>
-      <p>Keskiarvo: {Keskiarvo()}</p>
-      <p>Positiivisia: {Positiivisia()}% </p>
-    </div>
+    <>
+      <p>Ei yhtään palautetta annettu</p>
+    </>
+  );
+};
+
+const Statistic = ({ text, amount, text1 }) => {
+  return (
+    <tr>
+      <td>
+        {text} {amount} {text1}
+      </td>
+    </tr>
   );
 };
 
