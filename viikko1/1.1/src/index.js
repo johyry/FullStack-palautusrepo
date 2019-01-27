@@ -3,29 +3,39 @@ import ReactDOM from "react-dom";
 
 const App = () => {
   const course = {
-    name: 'Half Stack -sovelluskehitys',
+    name: "Half Stack -sovelluskehitys",
     parts: [
       {
-        name: 'Reactin perusteet',
+        id: 1,
+        name: "Reactin perusteet",
         exercises: 10
       },
       {
-        name: 'Tiedonvälitys propseilla',
+        id: 2,
+        name: "Tiedonvälitys propseilla",
         exercises: 7
       },
       {
-        name: 'Komponenttien tila',
+        id: 3,
+        name: "Komponenttien tila",
         exercises: 14
       }
     ]
-  }
+  };
 
   return (
     <div>
+      <Course course={course} />
+    </div>
+  );
+};
+
+const Course = ({ course }) => {
+  return (
+    <>
       <Header name={course.name} />
       <Content parts={course.parts} />
-      <Total parts={course.parts} />
-    </div>
+    </>
   );
 };
 
@@ -37,32 +47,38 @@ const Header = props => {
   );
 };
 
-const Content = props => {
-  console.log(props);
-  return (
-    <div>
-      <Part part={props.parts[0]} />
-      <Part part={props.parts[1]} />
-      <Part part={props.parts[2]} />
-    </div>
-  );
+const Content = ({ parts }) => {
+  console.log("toimii paikassa content", parts);
+  return <ul>{Parts((parts = { parts }))}</ul>;
 };
 
-const Part = props => {
-  return (
-    <div>
-      <p>
-        {props.part.name} {props.part.exercises}
-      </p>
-    </div>
-  );
+const Parts = ({ parts }) => {
+  console.log("toimii paikassa parts", parts);
+  return ( 
+    parts.map(part => 
+    <Part
+      key={part.id}
+      part={part}
+    />
+    )
+    
+  )
+};
+
+const Part = ({ part }) => {
+  console.log("toimii paikassa part", part);
+
+  return <li>{part.name} {part.exercises}</li>;
 };
 
 const Total = props => {
   return (
     <div>
       <p>
-        yhteensä {props.parts[0].exercises + props.parts[1].exercises + props.parts[2].exercises}{" "}
+        yhteensä{" "}
+        {props.parts[0].exercises +
+          props.parts[1].exercises +
+          props.parts[2].exercises}{" "}
         tehtävää
       </p>
     </div>
