@@ -2,18 +2,22 @@ import React, { useState } from "react";
 import ReactDOM from "react-dom";
 
 const App = props => {
-	const [selected, setSelected] = useState(0);
-	const [test, setTest] = useState(Array.apply(null, new Array(props.anecdotes.length)).map(Number.prototype.valueOf, 0));
+  const [selected, setSelected] = useState(0);
+  const [test, setTest] = useState(
+    Array.apply(null, new Array(props.anecdotes.length)).map(
+      Number.prototype.valueOf,
+      0
+    )
+  );
 
   const selectRandomAnecdote = () => {
     setSelected(Math.floor(Math.random() * props.anecdotes.length));
   };
 
   const voteAnecdote = () => {
-		const copy = [...test];
-		copy[selected]++;
-		setTest(copy);
-
+    const copy = [...test];
+    copy[selected]++;
+    setTest(copy);
   };
 
   return (
@@ -29,7 +33,7 @@ const App = props => {
       />
       <Button handleClick={voteAnecdote} text="Vote" />
 
-			<PrintTitle text={"Anecdote with Most Votes"} />
+      <PrintTitle text={"Anecdote with Most Votes"} />
       <FindTopAnecdote list={test} />
     </div>
   );
@@ -37,25 +41,23 @@ const App = props => {
 
 var best = 0;
 
-const PrintTitle = (props) => {
-	return <h1>{props.text}</h1>
-}
+const PrintTitle = props => {
+  return <h1>{props.text}</h1>;
+};
 
 const FindTopAnecdote = ({ list }) => {
+  var i;
 
-	var i;
-
-	for (i = 0; i < list.length; i++) {
-		if (list[i] > list[best]) {
-			best = i;
-		}
-	}
-	  
+  for (i = 0; i < list.length; i++) {
+    if (list[i] > list[best]) {
+      best = i;
+    }
+  }
 
   return (
     <div>
       <p> {anecdotes[best]}</p>
-			<p>Has {list[best]} votes </p>
+      <p>Has {list[best]} votes </p>
     </div>
   );
 };
