@@ -1,15 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from 'axios'
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: "Arto Hellas", number: "040-123456" },
-    { name: "Martti Tienari", number: "040-123456" },
-    { name: "Arto Järvinen", number: "040-123456" },
-    { name: "Lea Kutvonen", number: "040-123456" }
-  ]);
+  const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [newFilter, setNewFilter] = useState("");
+
+  useEffect(() => {
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        setPersons(response.data)
+      })
+  }, [])
 
   const addNumber = event => {
     event.preventDefault();
@@ -99,8 +103,7 @@ const PersonForm = props => (
 
 
 const Numerot = ({ numbers, filter }) => {
-  const filtered = numbers.filter(number => number.name.includes(filter));
-  console.log(filtered);
+  const filtered = numbers.filter(number => number.name.toUpperCase().includes(filter.toUpperCase()));
 
   return filtered.map(number => (
     <p key={number.name}>
