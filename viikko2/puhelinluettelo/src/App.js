@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
-import axios from 'axios'
+import personService from "./services/persons";
+
+
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -8,12 +10,11 @@ const App = () => {
   const [newFilter, setNewFilter] = useState("");
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
-      })
-  }, [])
+    personService.getAll()
+    .then(initialPersons => {
+      setPersons(initialPersons);
+    });
+  }, []);
 
   const addNumber = event => {
     event.preventDefault();
@@ -23,35 +24,63 @@ const App = () => {
       number: newNumber
     };
 
-    if (!personsContains(personObject)) {
-      setPersons(persons.concat(personObject));
+    const onko = personsContains(newName)
+    
+
+    if (onko === -1) {
+      personService.create(personObject)
+      .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson));
+      });
     } else {
-      window.alert(`${newName} on jo luettelossa`);
+      onko.number = newNumber
+      console.log('??', onko)
+      if (window.confirm(`${onko.name} on jo luettelossa, korvataanko vanha numero uudella?`)) {
+        personService
+          .update(onko)
+          .then(returnedObject => {
+            console.log(returnedObject)
+            setPersons(persons.map(p => p.id !== returnedObject.id ? p : returnedObject))
+          })
+      }
+      //window.alert(`${newName} on jo luettelossa`);
     }
     setNewName("");
+    setNewNumber("");
   };
 
-  const personsContains = personObject => {
+  const deleteNumber = ({ number }) => {
+
+    if (window.confirm(`Poistetaanko ${number.name}`)) {
+      personService
+      .Delete(number.id)
+    
+      setPersons(persons.filter(p => p.id !== number.id))
+    }
+    
+  }
+
+  const personsContains = name => {
     for (var i = 0; i < persons.length; i++) {
-      if (persons[i].name === personObject.name) {
-        return true;
+      if (persons[i].name === name) {
+        return persons[i]
       }
     }
-    return false;
+    return -1;
   };
 
   const handleNameChange = event => {
-    console.log(event.target.value);
+    //console.log(event.target.value);
     setNewName(event.target.value);
   };
 
   const handleNumberChange = event => {
-    console.log(event.target.value);
+    //console.log(event.target.value);
     setNewNumber(event.target.value);
   };
 
   const handleFilterChange = event => {
-    console.log(event.target.value);
+    //console.log(event.target.value);
     setNewFilter(event.target.value);
   };
 
@@ -63,17 +92,21 @@ const App = () => {
 
       <h2>Lisää uusi</h2>
 
-      <PersonForm 
+      <PersonForm
         onSubmit={addNumber}
         valueName={newName}
         onNameChange={handleNameChange}
         valueNumber={newNumber}
         onNumberChange={handleNumberChange}
       />
-            
+
       <h2>Numerot</h2>
 
-      <Numerot numbers={persons} filter={newFilter} />
+      <Numerot 
+        numbers={persons} 
+        filter={newFilter}
+        handleClick={(number) => deleteNumber(number)}
+      />
     </div>
   );
 };
@@ -92,7 +125,8 @@ const PersonForm = props => (
       nimi: <input value={props.valueName} onChange={props.onNameChange} />
     </div>
     <div>
-      numero: <input value={props.valueNumber} onChange={props.onNumberChange} />
+      numero:{" "}
+      <input value={props.valueNumber} onChange={props.onNumberChange} />
     </div>
     <div>
       <button type="submit">lisää</button>
@@ -100,15 +134,16 @@ const PersonForm = props => (
   </form>
 );
 
-
-
-const Numerot = ({ numbers, filter }) => {
-  const filtered = numbers.filter(number => number.name.toUpperCase().includes(filter.toUpperCase()));
+const Numerot = ({ numbers, filter, handleClick }) => {
+  const filtered = numbers.filter(number =>
+    number.name.toUpperCase().includes(filter.toUpperCase())
+  );
 
   return filtered.map(number => (
-    <p key={number.name}>
+    <div key={number.id}>
       {number.name} {number.number}
-    </p>
+      <button onClick={() => handleClick({number})}>delete</button>
+    </div>
   ));
 };
 
