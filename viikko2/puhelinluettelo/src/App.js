@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import personService from "./services/persons";
+import './index.css'
 
 
 
@@ -8,6 +9,8 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [newFilter, setNewFilter] = useState("");
+  const [errorMessage, setErrorMessage] = useState(null)
+
 
   useEffect(() => {
     personService.getAll()
@@ -31,19 +34,30 @@ const App = () => {
       personService.create(personObject)
       .then(returnedPerson => {
         setPersons(persons.concat(returnedPerson));
-      });
-    } else {
-      onko.number = newNumber
-      console.log('??', onko)
+        SetNotification(`Henkilö ${personObject.name} lisätty palvelimelle`)
+      })
+      .catch(error => {
+        SetNotification(`Henkilö ${personObject.name} on jo poistettu palvelimelta`)
+        setPersons(persons.filter(p => p.id !== onko.id))
+      })
+      
+      } else {
+      
       if (window.confirm(`${onko.name} on jo luettelossa, korvataanko vanha numero uudella?`)) {
+        onko.number = newNumber
         personService
           .update(onko)
           .then(returnedObject => {
-            console.log(returnedObject)
             setPersons(persons.map(p => p.id !== returnedObject.id ? p : returnedObject))
+            SetNotification(`Henkilön ${onko.name} numero muutettu palvelimella`)
+          })
+          .catch(error => {
+            SetNotification(`Henkilö ${personObject.name} on jo poistettu palvelimelta`)
+            setPersons(persons.filter(p => p.id !== onko.id))
           })
       }
-      //window.alert(`${newName} on jo luettelossa`);
+      
+
     }
     setNewName("");
     setNewNumber("");
@@ -54,8 +68,16 @@ const App = () => {
     if (window.confirm(`Poistetaanko ${number.name}`)) {
       personService
       .Delete(number.id)
+      .then(r => {
+        setPersons(persons.filter(p => p.id !== number.id))
+        SetNotification(`Henkilön ${number.name} poistettu palvelimelta`)
+      })
+      .catch(error => {
+        SetNotification(`Henkilö ${number.name} on jo poistettu palvelimelta`)
+        setPersons(persons.filter(p => p.id !== number.id))
+      })
     
-      setPersons(persons.filter(p => p.id !== number.id))
+      
     }
     
   }
@@ -84,9 +106,18 @@ const App = () => {
     setNewFilter(event.target.value);
   };
 
+  const SetNotification = (text) => {
+    setErrorMessage(text)
+    setTimeout(() => {
+      setErrorMessage(null)
+    }, 5000)
+  }
+
   return (
     <div>
       <h2>Puhelinluettelo</h2>
+
+      <Notification message={errorMessage} />
 
       <Filter value={newFilter} onChange={handleFilterChange} />
 
@@ -110,6 +141,8 @@ const App = () => {
     </div>
   );
 };
+
+
 
 const Filter = props => (
   <form>
@@ -146,5 +179,17 @@ const Numerot = ({ numbers, filter, handleClick }) => {
     </div>
   ));
 };
+
+const Notification = ({ message }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className="error">
+      {message}
+    </div>
+  )
+}
 
 export default App;
