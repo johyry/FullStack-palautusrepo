@@ -1,0 +1,9 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+    "title": "RESTaasdsd-TEST-LOL",
+    "author": "430420ads410",
+    "url": "jeejee.com",
+    "likes": 420
+}

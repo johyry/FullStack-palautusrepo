@@ -37,7 +37,7 @@ const App = () => {
         SetNotification(`Henkilö ${personObject.name} lisätty palvelimelle`)
       })
       .catch(error => {
-        SetNotification(`Henkilö ${personObject.name} on jo poistettu palvelimelta`)
+        SetNotification(error.response.data.error)
         setPersons(persons.filter(p => p.id !== onko.id))
       })
       
@@ -52,7 +52,7 @@ const App = () => {
             SetNotification(`Henkilön ${onko.name} numero muutettu palvelimella`)
           })
           .catch(error => {
-            SetNotification(`Henkilö ${personObject.name} on jo poistettu palvelimelta`)
+            SetNotification(error.response.data.error)
             setPersons(persons.filter(p => p.id !== onko.id))
           })
       }
