@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "watch": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --verbose"
   },
   "repository": {
     "type": "git",
@@ -29,6 +29,7 @@
     "eslint-plugin-jsx-a11y": "^6.2.1",
     "eslint-plugin-prettier": "^3.0.1",
     "eslint-plugin-react": "^7.12.4",
+    "jest": "^24.1.0",
     "morgan": "^1.9.1",
     "nodemon": "^1.18.10",
     "prettier": "^1.16.4"
@@ -39,5 +40,8 @@
     "express": "^4.16.4",
     "mongoose": "^5.4.17",
     "mongoose-unique-validator": "^2.0.2"
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }
