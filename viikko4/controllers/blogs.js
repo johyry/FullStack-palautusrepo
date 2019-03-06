@@ -8,6 +8,7 @@ blogsRouter.get('/', async (request, response) => {
 
 blogsRouter.post('/', async (request, response, next) => {
   const body = request.body;
+  console.log(body);
   if (body.likes === undefined) body.likes = 0;
 
   const blog = new Blog({
@@ -19,6 +20,31 @@ blogsRouter.post('/', async (request, response, next) => {
   try {
     const result = await blog.save();
     response.status(201).json(result);
+  } catch (exception) {
+    next(exception);
+  }
+});
+
+blogsRouter.delete('/:id', async (request, response, next) => {
+  try {
+    await Blog.findByIdAndRemove(request.params.id);
+    response.status(204).end();
+  } catch (exception) {
+    next(exception);
+  }
+});
+
+blogsRouter.put('/:id', async (request, response, next) => {
+  const body = request.body;
+  const blog = {
+    author: body.author,
+    title: body.title,
+    url: body.url,
+    likes: body.likes
+  };
+  try {
+    const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true });
+    response.json(updatedBlog.toJSON());
   } catch (exception) {
     next(exception);
   }

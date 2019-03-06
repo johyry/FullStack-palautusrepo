@@ -1,115 +1,103 @@
 const mongoose = require('mongoose');
 const supertest = require('supertest');
+const helper = require('./test.helper');
 const app = require('../app');
 const Blog = require('../models/blog');
 
 const api = supertest(app);
 
-const initialBlogs = [
-  {
-    title: 'HTML on helppoa',
-    author: 'Mikke Mäenpää',
-    url: 'www.htmlonhelppoa.com',
-    likes: 10
-  },
-  {
-    title: 'Tämä on esimerkkiblogi',
-    author: 'Esko Esimerkki',
-    url: 'www.esimerkkiesko.com',
-    likes: 32
+beforeEach(async () => {
+  await Blog.remove({});
+
+  for (let blog of helper.initialBlogs) {
+    let blogObject = new Blog(blog);
+    await blogObject.save();
   }
-];
-
-test('blogs are returned as json', async () => {
-  await api
-    .get('/api/blogs')
-    .expect(200)
-    .expect('Content-Type', /application\/json/);
 });
 
-test('all blogs are returned', async () => {
-  const response = await api.get('/api/blogs');
+describe('when there is initially some blogs saved', async () => {
+  test('blogs are returned as json', async () => {
+    await api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+  });
 
-  expect(response.body.length).toBe(initialBlogs.length);
+  test('all blogs are returned', async () => {
+    const blogs = await helper.blogsInDb();
+
+    expect(blogs.length).toBe(helper.initialBlogs.length);
+  });
 });
 
-test('a valid blog can be added', async () => {
-  const newBlog = {
-    title: 'Tämä on uusi blogi',
-    author: 'Esko Uusitalo',
-    url: 'www.123456789.com',
-    likes: 1
-  };
+describe('addition of a new blog', async () => {
+  test('a valid blog can be added', async () => {
+    const newBlog = {
+      title: 'Tämä on uusi blogi',
+      author: 'Esko Uusitalo',
+      url: 'www.123456789.com',
+      likes: 1
+    };
 
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(201)
-    .expect('Content-Type', /application\/json/);
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
 
-  const response = await api.get('/api/blogs');
+    const blogsAtEnd = await helper.blogsInDb();
+    expect(blogsAtEnd.length).toBe(helper.initialBlogs.length + 1);
+    const titles = blogsAtEnd.map(r => r.title);
 
-  const titles = response.body.map(r => r.title);
+    expect(titles).toContain('Tämä on uusi blogi');
+  });
 
-  expect(response.body.length).toBe(initialBlogs.length + 1);
-  expect(titles).toContain('Tämä on uusi blogi');
-});
+  test('a blog with undefined likes will have 0 likes', async () => {
+    const newBlog = {
+      title: 'Tämä on uusi blogi',
+      author: 'Esko Uusitalo',
+      url: 'www.123456789.com'
+    };
 
-test('a blog with undefined likes will have 0 likes', async () => {
-  const newBlog = {
-    title: 'Tämä on uusi blogi',
-    author: 'Esko Uusitalo',
-    url: 'www.123456789.com'
-  };
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
 
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(201)
-    .expect('Content-Type', /application\/json/);
+    const response = await api.get('/api/blogs');
 
-  const response = await api.get('/api/blogs');
+    expect(response.body[2].likes).toBe(0);
+  });
 
-  expect(response.body[2].likes).toBe(0);
-});
+  test('adding a new blog with undefined title will cause 400', async () => {
+    const newBlog = {
+      author: 'Esko Uusitalo',
+      url: 'www.123456789.com'
+    };
 
-test('adding a new blog with undefined title will cause 400', async () => {
-  const newBlog = {
-    author: 'Esko Uusitalo',
-    url: 'www.123456789.com'
-  };
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400);
+  });
 
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(400);
-});
+  test('adding a new blog with undefined url will cause 400', async () => {
+    const newBlog = {
+      title: 'blogiwhtoutURL',
+      author: 'Esko Uusitalo'
+    };
 
-test('adding a new blog with undefined url will cause 400', async () => {
-  const newBlog = {
-    title: 'blogiwhtoutURL',
-    author: 'Esko Uusitalo'
-  };
-
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(400);
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400);
+  });
 });
 
 test('blogs are identified by field named id, not _id', async () => {
-  const response = await api.get('/api/blogs');
-  expect(response.body[0].id).toBeDefined();
-});
-
-beforeEach(async () => {
-  await Blog.deleteMany({});
-
-  let noteObject = new Blog(initialBlogs[0]);
-  await noteObject.save();
-
-  noteObject = new Blog(initialBlogs[1]);
-  await noteObject.save();
+  const blogsAtEnd = await helper.blogsInDb();
+  expect(blogsAtEnd[0].id).toBeDefined();
 });
 
 afterAll(() => {
