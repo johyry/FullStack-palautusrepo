@@ -3,5 +3,5 @@ Content-Type: application/json
 
 {
     "title": "thisisamodifiedblog",
-    "likes": 100
+    "likes": 123
 }

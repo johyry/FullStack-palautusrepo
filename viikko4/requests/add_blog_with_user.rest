@@ -2,8 +2,9 @@ POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-    "title": "RESTaasdsd-TEST-LOL",
+    "title": "ADDEDUSER-TEST-LOL",
     "author": "430420ads410",
     "url": "jeejee.com",
-    "likes": 420
+    "likes": 420,
+    "userId": "5c7f8eb616ec9861d530d938"
 }

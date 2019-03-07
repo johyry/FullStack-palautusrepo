@@ -1,0 +1,5 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjVjN2Y4ZWI2MTZlYzk4NjFkNTMwZDkzOCIsImlhdCI6MTU1MTk0NzAxNH0.qh_hDs9BZHT10atTmQc5lRBMEfzM1JZ1wzjAZU71rQ4
+
+{ "title": "ADDEDUSER-TEST-LOL", "url": "jeejee.com", "userId": "5c7f8eb616ec9861d530d938" }
