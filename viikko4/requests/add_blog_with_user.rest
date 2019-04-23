@@ -1,10 +1,11 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im91a2tlaSIsImlkIjoiNWNiODI2N2I4ZjVkNTEyMmI5OTE4OTFjIiwiaWF0IjoxNTU1NTcyMzYzfQ.8lRXp0VdS3HNYVkvYFxnzQ2WQFlCstLWTfmPh7RzQ7g
 
 {
     "title": "ADDEDUSER-TEST-LOL",
     "author": "430420ads410",
     "url": "jeejee.com",
     "likes": 420,
-    "userId": "5c7f8eb616ec9861d530d938"
+    "userId": "5cb8267b8f5d5122b991891c"
 }
