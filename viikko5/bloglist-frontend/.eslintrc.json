@@ -9,6 +9,8 @@
   },
   "rules": {
     "jsx-a11y/href-no-hash": ["off"],
+    "react/button-has-type": ["off"],
+    "react/prop-types": ["off"],
     "prettier/prettier": ["error"],
     "no-console": "off",
     "prefer-destructuring": "off",

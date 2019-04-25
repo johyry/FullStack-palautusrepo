@@ -19,7 +19,6 @@
   },
   "homepage": "https://github.com/johyry/FullStack-palautusrepo#readme",
   "devDependencies": {
-    "babel-eslint": "^10.0.1",
     "cross-env": "^5.2.0",
     "eslint": "^5.15.1",
     "eslint-config-airbnb": "^17.1.0",
