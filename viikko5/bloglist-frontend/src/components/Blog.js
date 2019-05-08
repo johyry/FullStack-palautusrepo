@@ -23,11 +23,11 @@ const Blog = ({ blog, handleLike, handleDelete, user }) => {
     marginBottom: 5,
   };
   return (
-    <div style={blogStyle}>
-      <div onClick={toggleVisibility}>
+    <div style={blogStyle} className="blog">
+      <div onClick={toggleVisibility} className="showContentButton">
         Title: {blog.title} By: {blog.author}
       </div>
-      <div style={showWhenVisible}>
+      <div style={showWhenVisible} className="togglableContent">
         <ul>
           <li>{blog.url}</li>
           <li>

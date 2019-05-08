@@ -148,12 +148,18 @@ const App = () => {
       </Togglable>
 
       <h2>blogs</h2>
-      <Blogs
-        blogs={blogs}
-        handleLike={handleLike}
-        handleDelete={handleDelete}
-        user={user}
-      />
+      {user === '' ? (
+        <div>
+          <p>Log in to view blogs.</p>
+        </div>
+      ) : (
+        <Blogs
+          blogs={blogs}
+          handleLike={handleLike}
+          handleDelete={handleDelete}
+          user={user}
+        />
+      )}
     </div>
   );
 };
