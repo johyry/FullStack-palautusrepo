@@ -16,24 +16,20 @@ describe('<App />', () => {
   });
 
   it('if user is logged in, blogs are rendered', async () => {
-    const component = render(<App />);
-    component.rerender(<App />);
-
     const user = {
       username: 'tester',
-      token: '1231231214',
       name: 'Teuvo Testaaja',
     };
 
-    await window.localStorage.setItem(
-      'loggedBlogAppUser',
-      JSON.stringify(user)
-    );
+    localStorage.setItem('loggedBlogAppUser', JSON.stringify(user));
 
-    const blog = component.container.querySelector('.blog');
-    console.log(blog);
-    //await waitForElement(() => component.container.querySelector('.blog'));
+    const component = render(<App />);
 
-    component.debug();
+    component.rerender(<App />);
+
+    await waitForElement(() => component.container.querySelector('.blog'));
+
+    const blogs = component.container.querySelectorAll('.blog');
+    expect(blogs.length).toBe(3);
   });
 });
