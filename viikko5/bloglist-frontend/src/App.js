@@ -6,14 +6,15 @@ import LoginForm from './components/LoginForm';
 import NewBlogForm from './components/NewBlogForm';
 import blogService from './services/blogs';
 import loginService from './services/login';
+import useField from './hooks/index';
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
-  const [newBlogName, setNewBlogTitle] = useState('');
-  const [newBlogAuthor, setNewBlogAuthor] = useState('');
-  const [newBlogUrl, setNewBlogUrl] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const newBlogTitle = useField('text');
+  const newBlogAuthor = useField('text');
+  const newBlogUrl = useField('text');
+  const username = useField('text');
+  const password = useField('text');
   const [user, setUser] = useState('');
   const [errorMessage, setErrorMessage] = useState(null);
 
@@ -36,16 +37,16 @@ const App = () => {
     event.preventDefault();
     try {
       const userLog = await loginService.login({
-        username,
-        password,
+        username: username.value,
+        password: password.value,
       });
 
       window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(userLog));
 
       blogService.setToken(user.token);
       setUser(userLog);
-      setUsername('');
-      setPassword('');
+      password.emptyValue();
+      username.emptyValue();
     } catch (exception) {
       setErrorMessage('käyttäjätunnus tai salasana virheellinen');
       setTimeout(() => {
@@ -86,16 +87,16 @@ const App = () => {
 
     try {
       const newBlog = await blogService.create({
-        title: newBlogName,
-        author: newBlogAuthor,
-        url: newBlogUrl,
+        title: newBlogTitle.value,
+        author: newBlogAuthor.value,
+        url: newBlogUrl.value,
       });
 
       blogFormRef.current.toggleVisibility();
       setBlogs(blogs.concat(newBlog));
-      setNewBlogTitle('');
-      setNewBlogAuthor('');
-      setNewBlogUrl('');
+      newBlogTitle.emptyValue();
+      newBlogAuthor.emptyValue();
+      newBlogUrl.emptyValue();
     } catch (exception) {
       setErrorMessage('adding blog unsuccessful');
       setTimeout(() => {
@@ -116,10 +117,10 @@ const App = () => {
       {user === '' ? (
         <Togglable buttonLabel="login">
           <LoginForm
-            username={username}
-            password={password}
-            handleUsernameChange={({ target }) => setUsername(target.value)}
-            handlePasswordChange={({ target }) => setPassword(target.value)}
+            username={username.value}
+            password={password.value}
+            handleUsernameChange={username.onChange}
+            handlePasswordChange={password.onChange}
             handleSubmit={handleLogin}
             handleLogOut={handleLogOut}
           />
@@ -135,14 +136,12 @@ const App = () => {
 
       <Togglable buttonLabel="Create New Blog" ref={blogFormRef}>
         <NewBlogForm
-          newBlogName={newBlogName}
-          newBlogAuthor={newBlogAuthor}
-          newBlogUrl={newBlogUrl}
-          handleBlogTitleChange={({ target }) => setNewBlogTitle(target.value)}
-          handleBlogAuthorChange={({ target }) =>
-            setNewBlogAuthor(target.value)
-          }
-          handleBlogUrlChange={({ target }) => setNewBlogUrl(target.value)}
+          newBlogTitle={newBlogTitle.value}
+          newBlogAuthor={newBlogAuthor.value}
+          newBlogUrl={newBlogUrl.value}
+          handleBlogTitleChange={newBlogTitle.onChange}
+          handleBlogAuthorChange={newBlogAuthor.onChange}
+          handleBlogUrlChange={newBlogUrl.onChange}
           handleSubmit={handleAddNewBlog}
         />
       </Togglable>

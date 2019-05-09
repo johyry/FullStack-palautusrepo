@@ -5,14 +5,14 @@ const NewBlogForm = ({
   handleBlogTitleChange,
   handleBlogAuthorChange,
   handleBlogUrlChange,
-  newBlogName,
+  newBlogTitle,
   newBlogAuthor,
   newBlogUrl,
 }) => (
   <form onSubmit={handleSubmit}>
     <div>
-      Name:
-      <input value={newBlogName} onChange={handleBlogTitleChange} />
+      Title:
+      <input value={newBlogTitle} onChange={handleBlogTitleChange} />
     </div>
     <div>
       Author:
